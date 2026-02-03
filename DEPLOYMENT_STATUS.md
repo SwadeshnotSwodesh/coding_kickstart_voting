@@ -17,15 +17,15 @@ Your Django voting application is now configured for **Render.com** - a complete
 
 ### 🚀 Why Render.com?
 
-| Feature | Status |
-|---------|--------|
-| Free Tier | ✅ Yes, forever |
-| Database | ✅ Free PostgreSQL included |
-| Auto-Deploy | ✅ Connects to GitHub |
-| Public URL | ✅ https://voting-app-xxx.onrender.com |
-| SSL/HTTPS | ✅ Automatic |
-| Performance | ✅ Good for events |
-| Setup Time | ✅ 5 minutes |
+| Feature     | Status                                 |
+| ----------- | -------------------------------------- |
+| Free Tier   | ✅ Yes, forever                        |
+| Database    | ✅ Free PostgreSQL included            |
+| Auto-Deploy | ✅ Connects to GitHub                  |
+| Public URL  | ✅ https://voting-app-xxx.onrender.com |
+| SSL/HTTPS   | ✅ Automatic                           |
+| Performance | ✅ Good for events                     |
+| Setup Time  | ✅ 5 minutes                           |
 
 ## 🎬 How to Deploy
 
@@ -99,6 +99,7 @@ Duration:       Forever (no expiration)
 ## 🌐 Your Event URL
 
 After deployment, you'll get:
+
 ```
 https://voting-app-{random}.onrender.com/vote
 ```
@@ -123,12 +124,14 @@ No installation, no downloads. Just open the link and vote!
 ## 🆘 If Something Goes Wrong
 
 **During Event**:
+
 1. Go to Render dashboard
 2. Click **Restart** button
 3. Refresh browser
 4. Should be back online in <30 seconds
 
 **Check Logs**:
+
 1. Click **Logs** tab
 2. Look for error messages
 3. Most common: database connection (fixed automatically)

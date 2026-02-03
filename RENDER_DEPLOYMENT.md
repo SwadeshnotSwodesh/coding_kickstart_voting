@@ -1,6 +1,7 @@
 # Django Voting App - Render.com Deployment Guide
 
 ## Why Render.com?
+
 ✅ **Completely Free** - No credit card required
 ✅ **Auto-deploys** from GitHub
 ✅ **Includes Free PostgreSQL** database (5GB)
@@ -37,11 +38,13 @@ git push origin main
 **Environment**: `Python 3`
 
 **Build Command**:
+
 ```
 pip install -r requirements.txt && python manage.py collectstatic --noinput
 ```
 
 **Start Command**:
+
 ```
 gunicorn mysite.wsgi
 ```
@@ -52,11 +55,11 @@ gunicorn mysite.wsgi
 
 Click **Environment** and add:
 
-| Key | Value |
-|-----|-------|
-| `DEBUG` | `False` |
-| `ALLOWED_HOSTS` | `*.onrender.com` |
-| `PYTHON_VERSION` | `3.11.0` |
+| Key              | Value            |
+| ---------------- | ---------------- |
+| `DEBUG`          | `False`          |
+| `ALLOWED_HOSTS`  | `*.onrender.com` |
+| `PYTHON_VERSION` | `3.11.0`         |
 
 (Render will auto-generate `SECRET_KEY` and `DATABASE_URL`)
 
@@ -109,6 +112,7 @@ Your app will be available at: `https://voting-app-xxx.onrender.com`
 ### Application not loading
 
 Check logs: **Logs** tab
+
 ```
 Common issues:
 - Migration failed → Run in Shell: python manage.py migrate
@@ -151,6 +155,7 @@ python manage.py createsuperuser
 ## Auto-Deployment
 
 Every time you push to GitHub, Render automatically:
+
 1. Builds your app
 2. Runs migrations
 3. Collects static files
