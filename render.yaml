@@ -4,14 +4,16 @@ services:
     env: python
     plan: free
     branch: main
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
-    startCommand: gunicorn mysite.wsgi
-    healthCheckPath: /
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt && python manage.py collectstatic --noinput --clear
+    startCommand: gunicorn mysite.wsgi:application --bind 0.0.0.0:10000
+    healthCheckPath: /vote/
     envVars:
       - key: DEBUG
-        value: false
+        value: "False"
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com,127.0.0.1"
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
