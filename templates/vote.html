@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <title>Vote for Teams</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .passcode-container {
+        background: white;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .passcode-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .passcode-input {
+        padding: 15px;
+        font-size: 24px;
+        text-align: center;
+        letter-spacing: 5px;
+        border: 2px solid #007bff;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+      .thank-you-container {
+        background: white;
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 60px 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .thank-you-message {
+        font-size: 48px;
+        margin-bottom: 20px;
+        animation: bounce 0.6s infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      .thank-you-text {
+        font-size: 32px;
+        color: #28a745;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      .passcode-used {
+        background: #e7f3ff;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        border-left: 4px solid #007bff;
+      }
+      .completion-status {
+        text-align: center;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .completion-status.complete {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .completion-status.incomplete {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+      }
+      .category {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #007bff;
+      }
+      .vote-count {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      .vote-count.complete {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .vote-count.incomplete {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      .team-list {
+        list-style: none;
+        padding: 0;
+      }
+      .team-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        border-left: 4px solid #007bff;
+      }
+      .team-item.voted {
+        background-color: #d4edda;
+        border-left-color: #28a745;
+      }
+      .team-info {
+        flex-grow: 1;
+      }
+      .team-name {
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .team-votes {
+        font-size: 12px;
+        color: #666;
+      }
+      .team-actions {
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+      .vote-btn {
+        background-color: #007bff;
+        color: white;
+      }
+      .vote-btn:hover {
+        background-color: #0056b3;
+      }
+      .vote-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      .unvote-btn {
+        background-color: #28a745;
+        color: white;
+      }
+      .unvote-btn:hover {
+        background-color: #218838;
+      }
+      .submit-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+      }
+      .submit-btn:hover {
+        background-color: #218838;
+      }
+      .submit-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      .next-user-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+      }
+      .next-user-btn:hover {
+        background-color: #0056b3;
+      }
+      .submit-section {
+        margin-top: 30px;
+        text-align: center;
+      }
+      .messages {
+        margin-bottom: 20px;
+      }
+      .message {
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+      .message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Name Entry Screen -->
+    {% if show_name_form %}
+    <div class="header">
+      <h1>🗳️ Voting Registration</h1>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="passcode-container">
+      <h2>Enter Your Name</h2>
+      <p>Please enter your name to proceed with voting.</p>
+
+      <form method="POST" class="passcode-form">
+        {% csrf_token %}
+        <input
+          type="text"
+          name="voter_name"
+          class="passcode-input"
+          placeholder="Your Full Name"
+          required
+          autofocus
+        />
+        <button
+          type="submit"
+          class="vote-btn"
+          style="padding: 12px 24px; font-size: 16px"
+        >
+          Continue
+        </button>
+      </form>
+    </div>
+
+    <!-- Thank You Screen with Admin Passcode Entry -->
+    {% elif show_thank_you %}
+    <div class="thank-you-container">
+      <div class="thank-you-message">🎉</div>
+      <div class="thank-you-text">Thank You for Voting!</div>
+      <p style="font-size: 18px; color: #666; margin-bottom: 10px">
+        <strong>{{ voter_name }}</strong>, your votes have been recorded
+        successfully.
+      </p>
+      <p style="font-size: 16px; color: #666; margin-bottom: 30px">
+        All 15 votes (5 per category) have been counted.
+      </p>
+
+      <div class="passcode-used" style="margin-bottom: 30px">
+        <p style="margin: 0; font-size: 14px; color: #666">
+          Ready for the next voter?
+        </p>
+        <p style="margin: 5px 0 0 0; font-size: 12px">
+          Admin, please enter the passcode to allow the next person to vote.
+        </p>
+      </div>
+
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="POST" class="passcode-form">
+        {% csrf_token %}
+        <input
+          type="text"
+          name="passcode"
+          class="passcode-input"
+          placeholder="Enter admin passcode"
+          maxlength="10"
+          required
+          autofocus
+        />
+        <button
+          type="submit"
+          class="next-user-btn"
+          style="padding: 12px 24px; font-size: 16px"
+        >
+          Next Voter
+        </button>
+      </form>
+    </div>
+
+    <!-- Voting Screen -->
+    {% else %}
+    <div class="header">
+      <h1>🎯 Vote for Your Favorite Teams</h1>
+      <p>Vote for exactly 5 teams in each category (Total: 15 votes)</p>
+      <p style="color: #666; font-size: 16px; margin-top: 10px">
+        Voter: <strong>{{ voter_name }}</strong>
+      </p>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% if is_all_complete %}
+    <div class="completion-status complete">
+      ✓ Voting Complete! You have voted for 5 teams in each category. Please
+      confirm your votes below.
+    </div>
+    {% else %}
+    <div class="completion-status incomplete">
+      ⚠ Voting in Progress: You need to vote for 5 teams in each category.
+    </div>
+    {% endif %}
+
+    <div class="categories">
+      <!-- Scratch Category -->
+      <div class="category">
+        <div class="category-title">🎨 Scratch</div>
+        <div
+          class="vote-count {% if scratch_count == 5 %}complete{% else %}incomplete{% endif %}"
+        >
+          Your Votes: {{ scratch_count }}/5
+        </div>
+        <ul class="team-list">
+          {% for team in scratch_teams %}
+          <li
+            class="team-item {% if team.id in scratch_voted %}voted{% endif %}"
+          >
+            <div class="team-info">
+              <div class="team-name">{{ team.name }}</div>
+            </div>
+            <div class="team-actions">
+              {% if team.id in scratch_voted %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="unvote" />
+                <button type="submit" class="unvote-btn">Unvote</button>
+              </form>
+              {% else %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="vote" />
+                <button
+                  type="submit"
+                  class="vote-btn"
+                  {%
+                  if
+                  scratch_count=""
+                  ="5"
+                  %}disabled{%
+                  endif
+                  %}
+                >
+                  Vote
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+          {% empty %}
+          <li>No teams available</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- App Inventor Category -->
+      <div class="category">
+        <div class="category-title">📱 App Inventor</div>
+        <div
+          class="vote-count {% if app_inventor_count == 5 %}complete{% else %}incomplete{% endif %}"
+        >
+          Your Votes: {{ app_inventor_count }}/5
+        </div>
+        <ul class="team-list">
+          {% for team in app_inventor_teams %}
+          <li
+            class="team-item {% if team.id in app_inventor_voted %}voted{% endif %}"
+          >
+            <div class="team-info">
+              <div class="team-name">{{ team.name }}</div>
+            </div>
+            <div class="team-actions">
+              {% if team.id in app_inventor_voted %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="unvote" />
+                <button type="submit" class="unvote-btn">Unvote</button>
+              </form>
+              {% else %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="vote" />
+                <button
+                  type="submit"
+                  class="vote-btn"
+                  {%
+                  if
+                  app_inventor_count=""
+                  ="5"
+                  %}disabled{%
+                  endif
+                  %}
+                >
+                  Vote
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+          {% empty %}
+          <li>No teams available</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Robotics Category -->
+      <div class="category">
+        <div class="category-title">🤖 Robotics</div>
+        <div
+          class="vote-count {% if robotics_count == 5 %}complete{% else %}incomplete{% endif %}"
+        >
+          Your Votes: {{ robotics_count }}/5
+        </div>
+        <ul class="team-list">
+          {% for team in robotics_teams %}
+          <li
+            class="team-item {% if team.id in robotics_voted %}voted{% endif %}"
+          >
+            <div class="team-info">
+              <div class="team-name">{{ team.name }}</div>
+            </div>
+            <div class="team-actions">
+              {% if team.id in robotics_voted %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="unvote" />
+                <button type="submit" class="unvote-btn">Unvote</button>
+              </form>
+              {% else %}
+              <form method="POST" style="display: inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}" />
+                <input type="hidden" name="action" value="vote" />
+                <button
+                  type="submit"
+                  class="vote-btn"
+                  {%
+                  if
+                  robotics_count=""
+                  ="5"
+                  %}disabled{%
+                  endif
+                  %}
+                >
+                  Vote
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+          {% empty %}
+          <li>No teams available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    {% if is_all_complete %}
+    <div class="submit-section">
+      <form method="POST">
+        {% csrf_token %}
+        <button type="submit" name="action" value="submit" class="submit-btn">
+          Confirm and Submit Votes
+        </button>
+      </form>
+    </div>
+    {% endif %} {% endif %}
+  </body>
+</html>
