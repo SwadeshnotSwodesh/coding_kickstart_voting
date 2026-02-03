@@ -41,7 +41,7 @@ class VotingPasscode(models.Model):
 
 class UserVote(models.Model):
     session_key = models.CharField(max_length=40, unique=True)
-    voter_name = models.CharField(max_length=100, blank=True, null=True)
+    voter_name = models.CharField(max_length=100, blank=False, null=False, default="")
     scratch_votes = models.ManyToManyField(Team, related_name='scratch_voters', blank=True)
     app_inventor_votes = models.ManyToManyField(Team, related_name='app_inventor_voters', blank=True)
     robotics_votes = models.ManyToManyField(Team, related_name='robotics_voters', blank=True)
@@ -50,7 +50,14 @@ class UserVote(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Voter: {self.voter_name or 'Unknown'} - {self.created_at}"
+        return f"Voter: {self.voter_name} - {self.created_at}"
+
+    def save(self, *args, **kwargs):
+        """Ensure voter_name is not empty before saving (except on initial creation)"""
+        # Only enforce non-empty voter_name if this is an update (pk exists) or if voter_name was explicitly set
+        if self.pk is not None and (not self.voter_name or not self.voter_name.strip()):
+            raise ValueError("Voter name is required and cannot be empty.")
+        super().save(*args, **kwargs)
 
     def get_scratch_count(self):
         return self.scratch_votes.count()

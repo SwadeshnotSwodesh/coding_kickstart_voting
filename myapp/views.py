@@ -12,6 +12,23 @@ def get_or_create_user_vote(request):
 def vote_view(request):
     user_vote = get_or_create_user_vote(request)
     
+    # STRICT: If user_vote exists without a voter_name, force name entry
+    # This blocks access to incomplete sessions
+    if not user_vote.voter_name or not user_vote.voter_name.strip():
+        if request.method == 'POST':
+            voter_name_raw = request.POST.get('voter_name', '').strip()
+            if voter_name_raw:
+                # Normalize names entered in any case to Title Case for consistent storage and display
+                voter_name = voter_name_raw.title()
+                user_vote.voter_name = voter_name
+                user_vote.save()
+                messages.success(request, f"Welcome, {voter_name}! You can now vote.")
+                return redirect('vote')
+            else:
+                messages.error(request, "Please enter your name to continue.")
+        
+        return render(request, 'vote.html', {'show_name_form': True})
+    
     # Check if user has completed voting and is showing thank you message
     if user_vote.is_complete:
         if request.method == 'POST':
@@ -29,20 +46,6 @@ def vote_view(request):
             'show_thank_you': True,
             'voter_name': user_vote.voter_name
         })
-    
-    # Check if voter name has been entered
-    if not user_vote.voter_name:
-        if request.method == 'POST':
-            voter_name = request.POST.get('voter_name', '').strip()
-            if voter_name:
-                user_vote.voter_name = voter_name
-                user_vote.save()
-                messages.success(request, f"Welcome, {voter_name}! You can now vote.")
-                return redirect('vote')
-            else:
-                messages.error(request, "Please enter your name to continue.")
-        
-        return render(request, 'vote.html', {'show_name_form': True})
     
     # Voting process
     if request.method == 'POST':
