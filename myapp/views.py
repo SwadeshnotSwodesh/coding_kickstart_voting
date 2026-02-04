@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils import timezone
 from .models import Team, UserVote, VotingPasscode
+from django.http import HttpResponse
+
+def home(request):
+    return render(request, "home.html")
 
 def get_or_create_user_vote(request):
     if not request.session.session_key:
