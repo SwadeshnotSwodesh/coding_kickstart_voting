@@ -12,22 +12,19 @@ class Command(BaseCommand):
         password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
 
         if not email or not password:
-            self.stdout.write(self.style.WARNING(
-                "Superuser env vars not set"
-            ))
+            self.stdout.write("Superuser env vars not set")
             return
 
-        if User.objects.filter(email=email).exists():
-            self.stdout.write(self.style.SUCCESS(
-                "Superuser already exists"
-            ))
+        username = email.split("@")[0]
+
+        if User.objects.filter(username=username).exists():
+            self.stdout.write("Superuser already exists")
             return
 
         User.objects.create_superuser(
+            username=username,
             email=email,
             password=password
         )
 
-        self.stdout.write(self.style.SUCCESS(
-            "Superuser created successfully"
-        ))
+        self.stdout.write("Superuser created successfully")
