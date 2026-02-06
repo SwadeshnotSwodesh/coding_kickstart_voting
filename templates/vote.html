@@ -259,6 +259,14 @@
       .message.fade-out {
         animation: slideOut 0.3s ease-out forwards;
       }
+
+ 
+      .freeze-ui {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 9999;
+  }
     </style>
   </head>
   <body>
@@ -546,7 +554,16 @@
       </form>
     </div>
     {% endif %} {% endif %}
-    <script>
+
+
+
+
+
+
+
+
+
+    {% comment %} <script>
       // Prevent automatic scroll restoration and clear focus after reload
       if ("scrollRestoration" in history) {
         history.scrollRestoration = "manual";
@@ -575,6 +592,57 @@
               message.remove();
             }, 300); // Wait for animation to complete
           }, 4000); // Show for 4 seconds
+        });
+      });
+    </script> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+    <script>
+      // Disable browser automatic scroll restoration
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+
+      // Save scroll position BEFORE form submits
+      document.addEventListener("submit", function () {
+        sessionStorage.setItem("scrollPosition", window.scrollY);
+      });
+
+      // Restore scroll position AFTER page reload
+      window.addEventListener("load", function () {
+        const savedScroll = sessionStorage.getItem("scrollPosition");
+        if (savedScroll !== null) {
+          window.scrollTo(0, parseInt(savedScroll, 10));
+          sessionStorage.removeItem("scrollPosition");
+        }
+
+        // Remove focus from buttons to prevent jump
+        if (
+          document.activeElement &&
+          typeof document.activeElement.blur === "function"
+        ) {
+          document.activeElement.blur();
+        }
+      });
+
+      // Auto-dismiss toast notifications after 4 seconds
+      document.addEventListener("DOMContentLoaded", function () {
+        const messages = document.querySelectorAll(".message");
+        messages.forEach(function (message) {
+          setTimeout(function () {
+            message.classList.add("fade-out");
+            setTimeout(function () {
+              message.remove();
+            }, 300);
+          }, 4000);
         });
       });
     </script>
